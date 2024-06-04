@@ -1,0 +1,32 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: Connect
+metadata:
+  name: connect-team-alpha
+  namespace: confluent
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-server-connect:7.6.0
+    init: confluentinc/confluent-init-container:2.8.0
+  dependencies:
+    kafka:
+      bootstrapEndpoint: kafka:9071
+  build:
+      type: onDemand
+      onDemand:
+        plugins:
+          confluentHub:
+          - name: kafka-connect-jdbc
+            owner: confluentinc
+            version: 10.2.5
+          - name: kafka-connect-datagen
+            owner: confluentinc
+            version: 0.6.5
+          - name: kafka-connect-mongodb
+            owner: mongodb
+            version: 1.12.0
+          url:
+          - name: kafka-connect-salesforce
+            archivePath: https://raw.githubusercontent.com/pneff93/cfk-aks/main/plugins/confluentinc-kafka-connect-salesforce-2.0.20.zip
+            checksum: 1f4e448a6f1d3a6e3280de148562218dd970b2e9d4b2669b8775db08a5bd201a078186bd6aab3c217c8dd30c6c7d6c59721382aac3c18dfb9f91d400d49f6a94
+
