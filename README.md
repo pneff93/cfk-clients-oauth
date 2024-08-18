@@ -49,7 +49,7 @@ https://login.microsoftonline.com/[tenant_id]/oauth2/token
 
 > [!NOTE]
 > In this example, we only register one application in Azure AD. Consider different applications with its secret per CP component
-> and client
+> and client.
 
 
 
@@ -110,7 +110,7 @@ Note, that we need to add the scope to the `sasl.jaas.config` which is `<Azure c
 
 * [Quickstart: Create an Azure container registry using the Azure portal](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal?tabs=azure-cli)
 
-To use the Producer application in the AKS cluster, we need to build and push an image to the Azure Container Registry (ACR) and integrate
+To deploy the Producer application in the AKS cluster, we need to build and push an image to the Azure Container Registry (ACR) and integrate
 it with the AKS cluster.
 
 
@@ -136,7 +136,7 @@ We build the image via
 # Build image (fatJar needs to be located in main folder)
 docker build -t kafkaproducer .
 
-# And tag to the built image
+# Tag the built image
 docker tag kafkaproducer <aks-name>.azurecr.io/kafkaproducer:0.1.0
 
 # Push the image to the registry via 
