@@ -14,11 +14,10 @@ General resources:
 * [Confluent for Kubernetes Quick Start](https://docs.confluent.io/operator/current/co-quickstart.html)
 * [CP OAuth documentation](https://docs.confluent.io/platform/current/security/authentication/sasl/oauthbearer/overview.html#sasl-oauthbearer-authentication-overview)
 
----
 > [!NOTE]
 > This repositry only focusses on Confluent Platform, not Confluent Cloud.
 > For an example for OAuth with Confluent Cloud check out [https://github.com/pneff93/ccloud-clients-oauth](https://github.com/pneff93/ccloud-clients-oauth).
----
+
 
 ## Azure endpoints
 
