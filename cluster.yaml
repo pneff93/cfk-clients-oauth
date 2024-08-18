@@ -6,14 +6,14 @@ metadata:
 spec:
   dataVolumeCapacity: 10G
   image:
-    application: docker.io/confluentinc/cp-server:7.6.0
-    init: confluentinc/confluent-init-container:2.8.0
+    application: docker.io/confluentinc/cp-server:7.7.0
+    init: confluentinc/confluent-init-container:2.9.1
   replicas: 1
 ---
 apiVersion: platform.confluent.io/v1beta1
 kind: Kafka
 metadata:
-  name: kafka
+  name: broker
   namespace: confluent
 spec:
   dependencies:
@@ -22,9 +22,27 @@ spec:
         name: kraftcontroller
   dataVolumeCapacity: 10G
   image:
-    application: docker.io/confluentinc/cp-server:7.6.0
-    init: confluentinc/confluent-init-container:2.8.0
+    application: docker.io/confluentinc/cp-server:7.7.0
+    init: confluentinc/confluent-init-container:2.9.1
   replicas: 3
+  listeners:
+    external:
+      authentication:
+        type: oauth
+        jaasConfig:
+          secretRef: oauth-jass
+        oauthSettings:
+          groupsClaimName: groups
+          subClaimName: sub
+          audience: <client-id>
+          expectedIssuer: https://login.microsoftonline.com/<tenant-id>/v2.0
+          jwksEndpointUri: https://login.microsoftonline.com/<tenant-id>/discovery/v2.0/keys
+          tokenEndpointUri: https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token
+  configOverrides:
+    server:
+      - auto.create.topics.enable=true
+      - listener.name.external.oauthbearer.sasl.server.callback.handler.class=org.apache.kafka.common.security.oauthbearer.secured.OAuthBearerValidatorCallbackHandler
+      - listener.name.external.oauthbearer.sasl.jaas.config=org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required;
 ---
 apiVersion: platform.confluent.io/v1beta1
 kind: ControlCenter
@@ -34,10 +52,17 @@ metadata:
 spec:
   replicas: 1
   image:
-    application: confluentinc/cp-enterprise-control-center:7.6.0
-    init: confluentinc/confluent-init-container:2.8.0
+    application: confluentinc/cp-enterprise-control-center:7.7.0
+    init: confluentinc/confluent-init-container:2.9.1
   dataVolumeCapacity: 10Gi
   dependencies:
-    connect:
-    - name: connect
-      url: http://connect.confluent.svc.cluster.local:8083
+    kafka:
+      bootstrapEndpoint: broker.confluent.svc.cluster.local:9092
+      authentication:
+        type: oauth
+        jaasConfig:
+          secretRef: oauth-jass
+        oauthSettings:
+          tokenEndpointUri: https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token
+          scope: <Azure client id of the broker application>/.default
+---
