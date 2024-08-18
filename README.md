@@ -1,6 +1,6 @@
 # OAuth for CFK with Azure
 
-[Confluent Platform 7.7](https://docs.confluent.io/platform/current/release-notes/index.html) and [CFK 2.9](https://docs.confluent.io/operator/current/release-notes.html) released OAuth support.
+[Confluent Platform 7.7](https://docs.confluent.io/platform/current/release-notes/index.html) and [CFK 2.9.0](https://docs.confluent.io/operator/current/release-notes.html) released OAuth support.
 This repository sets up a basic CP cluster via CFK running on Azure Kubernetes Service (AKS) enforcing
 external clients to use OAuth for authentication with Azure AD (Entra ID) as the identity provider.
 
@@ -8,6 +8,7 @@ In technical detail it deploys:
 * 1 KraftController
 * 3 Kafka brokers
 * 1 Producer application (client)
+* 1 Control Center
 
 General resources:
 * [Quickstart: Deploy an Azure Kubernetes Service (AKS) cluster using Azure portal](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-deploy-portal?tabs=azure-cli)
@@ -19,7 +20,7 @@ General resources:
 > For an example for OAuth with Confluent Cloud check out [https://github.com/pneff93/ccloud-clients-oauth](https://github.com/pneff93/ccloud-clients-oauth).
 
 
-## Azure endpoints
+## Azure AD endpoints
 
 For the later configuration we need to set the `token_endpoint`, the `jwks_uri`, and the `issuer`.
 We can obtain all information via
@@ -35,9 +36,9 @@ jwks_uri = https://login.microsoftonline.com/<tenant-id>/discovery/v2.0/keys
 issuer = https://login.microsoftonline.com/<tenant-id>/v2.0
 ```
 
-## Azure applications
+## Azure AD applications
 
-To retrieve the JWT token, CP is using the client credentials grant flow meaning we need to register an application in Azure
+To retrieve the JWT token, CP is using the client credentials grant flow. So, we need to register an application in Azure AD
 and create a secret. 
 We can get a JWT token via: 
 ```
@@ -47,7 +48,7 @@ https://login.microsoftonline.com/[tenant_id]/oauth2/token
 ```
 
 > [!NOTE]
-> In this example, we only register one application in Azure. Consider different applications with its secret per CP component
+> In this example, we only register one application in Azure AD. Consider different applications with its secret per CP component
 > and client
 
 
@@ -183,11 +184,11 @@ dependencies:
         secretRef: oauth-jass
       oauthSettings:
         tokenEndpointUri: see above
-        scope: <<Azure client id of the broker application>/.default>
+        scope: <Azure client id of the broker application>/.default>
 ```
 
 ```
-# Re-deploy cluster
+# Update cluster
 kubectl apply -f ./cluster.yaml -n confluent
 
 # Port forward C3
