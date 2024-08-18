@@ -46,11 +46,10 @@ curl -X POST -H "Content-Type: application/x-www-form-urlencoded" \
 https://login.microsoftonline.com/[tenant_id]/oauth2/token
 ```
 
----
 > [!NOTE]
 > In this example, we only register one application in Azure. Consider different applications with its secret per CP component
 > and client
----
+
 
 
 ## CFK cluster
