@@ -194,6 +194,6 @@ kubectl apply -f ./cluster.yaml -n confluent
 # Port forward C3
 kubectl port-forward controlcenter-0 9021:9021
 ```
-We access C3 via `localhost:9091` and see the produced events:
+We access C3 via `localhost:9021` and see the produced events:
 
 ![](./images/c3.png)
